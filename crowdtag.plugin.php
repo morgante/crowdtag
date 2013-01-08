@@ -21,8 +21,12 @@ class CrowdTag extends Plugin
 	
 	public function theme_collect_tags( $theme )
 	{		
-		// assign placeholder text
-		$theme->form = self::form( $theme->post );
+		$post = $theme->post;
+	
+		// assign the form
+		$theme->form = self::form( $post );
+		
+		Utils::debug( Vocabulary::get('tag_suggestions')->get_object_terms( 'post', $post->id ); );
 		
 		// Return the output of the custom template
 		return $theme->fetch( 'tag_collection' );
@@ -43,8 +47,16 @@ class CrowdTag extends Plugin
 	
 	public static function handle_form( $form, $post )
 	{
-		Utils::debug( $post );
-		exit;
+				
+		$vocab = Vocabulary::get('tag_suggestions');
+				
+		// Add a term
+		$term = $vocab->add_term( $form->tag_suggestions->value );
+		
+		$terms = array( $term );
+		
+		// Associate some terms with the post
+		$vocab->set_object_terms('post', $post->id, $terms );
 	}
 }
 ?>
